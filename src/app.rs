@@ -116,7 +116,7 @@ fn show_buttons(props: &ButtonsProp) -> Html {
                 new_code.push(i);
                 if new_code.len() == props.size {
                     if new_code == props.solution {
-                        //
+                        // Next level
                     } else {
                         new_code.clear();
                     }
