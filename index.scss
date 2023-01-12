@@ -10,32 +10,52 @@ body {
   justify-content: center;
 
   background: linear-gradient(to bottom right, #191724, #ebbcba);
-  font-size: 1.5rem;
+  font-size: 2rem;
 }
 
 main {
   color: #e0def4;
-  font-family: sans-serif;
+  font-family: sans-serif mono;
   text-align: center;
 }
 
-.logo {
-  height: 20em;
-}
-
-.heart:after {
-  content: "❤️";
-
-  font-size: 1.75em;
-}
-
-h1 + .subtitle {
-  display: block;
-  margin-top: -1em;
-}
-
-td {
+.block {
   aspect-ratio: 1 / 1;
-  width: 1.5rem;
-  display: inline-block;
+  width: 2.5rem;
+  display: table-cell;
+
+  --b: 2px;   /* thickness of the border */
+  --c: #6e6a8680;   /* color of the border */
+  --w: 20%;  /* width of border */
+
+  border: var(--b) solid #0000; /* space for the border */
+  --_g: #0000 90deg,var(--c) 0;
+  --_p: var(--w) var(--w) border-box no-repeat;
+  background:
+    conic-gradient(from 90deg  at top    var(--b) left  var(--b),var(--_g)) 0    0    / var(--_p),
+    conic-gradient(from 180deg at top    var(--b) right var(--b),var(--_g)) 100% 0    / var(--_p),
+    conic-gradient(from 0deg   at bottom var(--b) left  var(--b),var(--_g)) 0    100% / var(--_p),
+    conic-gradient(from -90deg at bottom var(--b) right var(--b),var(--_g)) 100% 100% / var(--_p);
+
+  text-align: center;
+  vertical-align: middle;
+
+  padding: 0;
+  margin: 0;
+  font-weight: bolder;
+}
+
+tr td {
+  padding: 0;
+  margin: 0;
+}
+
+.nav {
+  padding: 0.5em;
+  width: 2rem;
+  color: #908caa;
+}
+
+.buttons {
+  color: #eb6f92;
 }
