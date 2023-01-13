@@ -1,11 +1,11 @@
 # The Rosetta Block Trials 
 
-This is a minimalistic recreation of the puzzle game: [[7MMC] The Rosetta Block Trials` by rubenscube](https://mmcelebration.com/level/4/31). 
+This is a minimalistic recreation of the puzzle game: [[7MMC] The Rosetta Block Trials` by rubenscube](https://mmcelebration.com/level/4/31/#!/about). 
 Using [Yew](https://yew.rs/) and built with [Trunk](https://github.com/thedodd/trunk).
 
 ## Credit
 
-- Puzzle by: [rubenscube](https://mmcelebration.com/level/4/31)
+- Puzzle by: [rubenscube](https://mmcelebration.com/level/4/31/#!/about)
 - Tech: [Yew](https://yew.rs/)+ [Trunk](https://github.com/thedodd/trunk) + [Rust](https://www.rust-lang.org/)
 - Colors: [Rosé Pine](https://rosepinetheme.com)
 - Programer: [varpeti](https://github.com/varpeti)
