@@ -2,17 +2,18 @@ use yew::prelude::*;
 
 use crate::components::buttons::*;
 
-#[derive(Clone, PartialEq, Properties)]
-pub struct LevelProp {
+#[derive(Clone, PartialEq)]
+pub struct LevelStruct {
     pub map: Vec<Vec<Block>>,
     pub solution: Vec<usize>,
-    pub unlock: Callback<u8>,
 }
 
-impl LevelProp {
-    fn new() -> Self {
-        Self{map: vec![], solution: vec![], unlock: Callback::from(move |_| {}) }
-    }
+#[derive(Clone, PartialEq, Properties)]
+pub struct LevelProp {
+    pub level: LevelStruct,
+    pub unlock: Callback<u8>,
+    pub code: UseStateHandle<Vec<usize>>,
+    pub indicator: UseStateHandle<bool>,
 }
 
 #[derive(Clone, PartialEq)]
@@ -56,7 +57,7 @@ impl Block {
 
 #[function_component(Level)]
 pub fn show_level(props: &LevelProp) -> Html {
-    let blocks = props.map.iter().map(|line| {
+    let blocks = props.level.map.iter().map(|line| {
         let line = line.iter().map(|block| block.get_html());
         html! {
         <tr>
@@ -68,16 +69,19 @@ pub fn show_level(props: &LevelProp) -> Html {
     html! {
         <table>
             { blocks.collect::<Html>() }
-            <Buttons size={props.map.len()} solution={props.solution} unlock={props.unlock} />
+            <Buttons size={props.level.map.len()} solution={props.level.solution} unlock={props.unlock} code={props.code} indicator={props.indicator}/>
         </table>
     }
 }
 
-pub fn create_level(size: u8, data: &str) -> LevelProp {
+pub fn create_level(size: u8, data: &str) -> LevelStruct {
     if ((size * size + size) as usize) != data.len() {
         panic!("{size} != len('{data}')")
     }
-    let mut level = LevelProp::new(); 
+    let mut level = LevelStruct {
+        map: vec![],
+        solution: vec![],
+    };
     let mut chars = data.chars();
     for _y in 0..size {
         let mut line = vec![];
@@ -88,7 +92,9 @@ pub fn create_level(size: u8, data: &str) -> LevelProp {
     }
     level.solution = vec![];
     for _i in 0..size {
-        level.solution.push( (chars.next().expect("Not enough data!!") as u8 - 48) as usize )
+        level
+            .solution
+            .push((chars.next().expect("Not enough data!!") as u8 - 48) as usize)
     }
     level
 }

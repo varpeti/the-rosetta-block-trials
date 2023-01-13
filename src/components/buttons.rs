@@ -4,11 +4,13 @@ use yew::prelude::*;
 struct ButtonProp {
     value: bool,
     onclick: Callback<MouseEvent>,
+    indicator: bool,
 }
 
 #[function_component(Button)]
 fn show_button(props: &ButtonProp) -> Html {
-    html! { <td> <span class="buttons" onclick={props.onclick.clone()}> {if props.value {'〇'} else {' '} } </span> </td> }
+    let props = props.clone();
+    html! { <td> <span class="buttons" onclick={props.onclick} indicator={props.indicator.to_string()}> {if props.value {'〇'} else {' '} } </span> </td> }
 }
 
 #[derive(Clone, PartialEq, Properties)]
@@ -16,37 +18,39 @@ pub struct ButtonsProp {
     pub size: usize,
     pub solution: Vec<usize>,
     pub unlock: Callback<u8>,
+    pub code: UseStateHandle<Vec<usize>>,
+    pub indicator: UseStateHandle<bool>,
 }
 
 #[function_component(Buttons)]
 pub fn show_buttons(props: &ButtonsProp) -> Html {
-    let code = use_state(|| vec![]);
-
     let mut buttons = vec![];
 
     for i in 0..props.size {
         let onclick = {
-            let code = code.clone();
             let props = props.clone();
             Callback::from(move |_| {
                 let mut new_code = Vec::<usize>::new();
-                for v in code.iter() {
+                for v in props.code.iter() {
                     new_code.push(*v);
                 }
                 new_code.push(i);
                 if new_code.len() == props.size {
                     if new_code == props.solution {
-                        props.unlock.emit(0);
+                        props.unlock.emit(0); // unlock next level
+                        props.indicator.set(true);
+                    } else {
+                        props.indicator.set(false);
                     }
                     new_code.clear();
                 }
-                code.set(new_code);
+                props.code.set(new_code);
             })
         };
-        if !code.contains(&i) {
-            buttons.push(html! { <Button value={true} onclick={onclick}/> });
+        if !props.code.contains(&i) {
+            buttons.push(html! { <Button value={true} onclick={onclick} indicator={*props.indicator}/> });
         } else {
-            buttons.push(html! { <Button value={false} onclick={Callback::from(move |_| {})}/> });
+            buttons.push(html! { <Button value={false} onclick={Callback::from(move |_| {})} indicator={*props.indicator}/> });
         }
     }
     html! {

@@ -4,13 +4,13 @@ use crate::components::level::*;
 
 #[function_component(Selector)]
 pub fn show_level_selector() -> Html {
-    let level_id = use_state(|| 0);
-    let unlocked_level = use_state(|| 0);
-
-    // TODO move code state here -> refresh code after map change
-    // TODO feedback for good/bad solution
-    
+    let level_id = use_state(|| 0); // Stores the current level id
+    let unlocked_level = use_state(|| 0); // Stores the higest level unlocked
+    let code = use_state(|| vec![]); // Stores the current code entered by the player
+    let indicator = use_state(|| false); // Indicate the last answer correctness
+ 
     // TODO add credit
+    // TODO add achivements
 
     let levels = vec![
         create_level(3, "  . .....012"),
@@ -23,6 +23,21 @@ pub fn show_level_selector() -> Html {
         create_level(5, " .   ..   . .   + . . ...43201"),
         create_level(3, "  . . . +012"),
         create_level(3, "   +   ..210"),
+        create_level(3, ".     + +120"),
+        create_level(3, "  .    ?+012"),
+        create_level(4, "?     ? ?     ? 3120"),
+        create_level(5, "      ???? ?  ? ?  ? ????02134"),
+        create_level(3, "--..-....102"),
+        create_level(4, "--.---.  -.   . 1032"),
+        create_level(3, "? -?  ?. 120"),
+        create_level(3, " -?  . + 012"),
+        create_level(3, "+-    . .210"),
+        create_level(3, "? ?     ?102"),
+        create_level(4, "?   ??    ??  ? 3021"),
+        create_level(4, "? ???? ? ? ?    3021"),
+        create_level(4, "??  ??    ??  ??3021"),
+        create_level(4, "?  ?  ?? ?  ??  0312"),
+        create_level(4, "??   ?    ???  ?2310"),
         // TODO add levels
     ];
     
@@ -36,9 +51,13 @@ pub fn show_level_selector() -> Html {
     let forward = {
         let level_id = level_id.clone();
         let unlocked_level = unlocked_level.clone();
+        let code = code.clone();
+        let indicator = indicator.clone();
         Callback::from(move |_| {
             if *level_id + 1 <= *unlocked_level && *level_id < levels_len - 1 {
                 level_id.set(*level_id + 1);
+                code.set(vec![]);
+                indicator.set(false);
             }
         })
     };
@@ -51,10 +70,14 @@ pub fn show_level_selector() -> Html {
     }
 
     let backward = {
-        let level_id = level_id.clone();
+        let level_id = level_id.clone(); 
+        let code = code.clone();
+        let indicator = indicator.clone();
         Callback::from(move |_| {
             if *level_id > 0 {
                 level_id.set(*level_id - 1);
+                code.set(vec![]);
+                indicator.set(false);
             }
         })
     };
@@ -71,7 +94,7 @@ pub fn show_level_selector() -> Html {
         let unlocked_level = unlocked_level.clone();
         Callback::from(move |_| {
             if *level_id + 1 > *unlocked_level {
-                unlocked_level.set(*level_id + 1)
+                unlocked_level.set(*level_id + 1);
             }
         })
     };
@@ -80,7 +103,7 @@ pub fn show_level_selector() -> Html {
         <table>
             <tr>
                 {backward_button}
-                <td> <Level map={level.map} solution={level.solution} unlock={unlock} /> </td>
+                <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} /> </td>
                 {forward_button}
             </tr>
         </table>

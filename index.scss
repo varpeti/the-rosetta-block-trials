@@ -59,3 +59,7 @@ tr td {
 .buttons {
   color: #eb6f92;
 }
+
+.buttons[indicator="true"] {
+  color: #9ccfd8;
+}
