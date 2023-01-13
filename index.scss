@@ -9,7 +9,7 @@ body {
   display: flex;
   justify-content: center;
 
-  background: linear-gradient(to bottom right, #191724, #ebbcba);
+  background: linear-gradient(to bottom right, #191724, #3c1413);
   font-size: 2rem;
 }
 
@@ -17,6 +17,13 @@ main {
   color: #e0def4;
   font-family: sans-serif mono;
   text-align: center;
+  // unselectable text
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .block {
@@ -53,13 +60,31 @@ tr td {
 .nav {
   padding: 0.5em;
   width: 2rem;
+}
+
+.nav_button {
   color: #908caa;
+  transition: 200ms ease-out;
+}
+
+.nav_button:hover {
+  color: #e0def4;
 }
 
 .buttons {
+  font-weight: bold;
   color: #eb6f92;
+  transition: 200ms ease-out;
+}
+
+.buttons:hover {
+  color: #ebbcba;
 }
 
 .buttons[indicator="true"] {
   color: #9ccfd8;
+}
+
+.buttons[indicator="true"]:hover {
+  color: #3e8fb0;
 }

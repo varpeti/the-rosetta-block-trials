@@ -4,15 +4,12 @@ use crate::components::level::*;
 
 #[function_component(Selector)]
 pub fn show_level_selector() -> Html {
-    let level_id = use_state(|| 0); // Stores the current level id
-    let unlocked_level = use_state(|| 0); // Stores the higest level unlocked
+    let level_id = use_state(|| 2); // Stores the current level id
+    let unlocked_level = use_state(|| 2); // Stores the higest level unlocked
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
- 
-    // TODO add credit
-    // TODO add achivements
 
-    let levels = vec![
+    let levels = [
         create_level(3, "  . .....012"),
         create_level(3, " . .. ...201"),
         create_level(3, "? .? .?..102"),
@@ -40,19 +37,15 @@ pub fn show_level_selector() -> Html {
         create_level(4, "??   ?    ???  ?2310"),
         // TODO add levels
     ];
-    
-    let levels_len = levels.len();
 
-    let level = levels
-        .get(*level_id)
-        .expect("The {level_id} level does not exists!")
-        .clone();
+    // TODO keyboard support
 
     let forward = {
         let level_id = level_id.clone();
         let unlocked_level = unlocked_level.clone();
         let code = code.clone();
         let indicator = indicator.clone();
+        let levels_len = levels.len();
         Callback::from(move |_| {
             if *level_id + 1 <= *unlocked_level && *level_id < levels_len - 1 {
                 level_id.set(*level_id + 1);
@@ -64,13 +57,13 @@ pub fn show_level_selector() -> Html {
 
     let forward_button;
     if *level_id + 1 <= *unlocked_level {
-        forward_button = html! { <td class={"nav"} onclick={forward}>{'>'}</td> };
+        forward_button = html! { <td class={"nav"}> <span class={"nav_button"} onclick={forward}>{'>'}</span> </td> };
     } else {
-        forward_button = html! { <td class={"nav"}>{' '}</td> }
+        forward_button = html! { <td class={"nav"}></td> }
     }
 
     let backward = {
-        let level_id = level_id.clone(); 
+        let level_id = level_id.clone();
         let code = code.clone();
         let indicator = indicator.clone();
         Callback::from(move |_| {
@@ -84,9 +77,9 @@ pub fn show_level_selector() -> Html {
 
     let backward_button;
     if *level_id > 0 {
-        backward_button = html! { <td class={"nav"} onclick={backward}>{'<'}</td> };
+        backward_button = html! { <td class={"nav"}> <span class={"nav_button"} onclick={backward}>{'<'}</span> </td> };
     } else {
-        backward_button = html! { <td class={"nav"}>{' '}</td> }
+        backward_button = html! { <td class={"nav"}></td> }
     }
 
     let unlock = {
@@ -98,6 +91,36 @@ pub fn show_level_selector() -> Html {
             }
         })
     };
+
+    if *level_id == 0 {
+        return html! {
+            <table>
+                <tr>
+                    {backward_button}
+                        <p> {"Credits"} </p> //TODO
+                    {forward_button}
+                </tr>
+            </table>
+        };
+    }
+
+    if *level_id == 1 {
+        return html! {
+            <table>
+                <tr>
+                    {backward_button}
+                        <p> {"Achievements"} </p> //TODO
+                        <p> {*unlocked_level-2}{"/"}{levels.len()} </p>
+                    {forward_button}
+                </tr>
+            </table>
+        };
+    }
+
+    let level = levels
+        .get(*level_id - 2)
+        .expect("The {level_id} level does not exists!")
+        .clone();
 
     html! {
         <table>
