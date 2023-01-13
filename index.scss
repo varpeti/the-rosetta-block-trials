@@ -15,7 +15,7 @@ body {
 
 main {
   color: #e0def4;
-  font-family: sans-serif mono;
+  font-family: 'Source Code Pro', monospace;
   text-align: center;
   // unselectable text
   -webkit-touch-callout: none;
@@ -87,4 +87,26 @@ tr td {
 
 .buttons[indicator="true"]:hover {
   color: #3e8fb0;
+}
+
+a {
+  color: #c4a7e7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  color: #56526e;
+}
+
+a:visited {
+  color: #c4a7e7;
+}
+
+.credit {
+  padding: 0.5em;
+  text-align: left;
 }
