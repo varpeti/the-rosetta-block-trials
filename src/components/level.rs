@@ -14,6 +14,7 @@ pub struct LevelProp {
     pub unlock: Callback<u8>,
     pub code: UseStateHandle<Vec<usize>>,
     pub indicator: UseStateHandle<bool>,
+    pub flawless: UseStateHandle<bool>,
 }
 
 #[derive(Clone, PartialEq)]
@@ -69,7 +70,7 @@ pub fn show_level(props: &LevelProp) -> Html {
     html! {
         <table>
             { blocks.collect::<Html>() }
-            <Buttons size={props.level.map.len()} solution={props.level.solution} unlock={props.unlock} code={props.code} indicator={props.indicator}/>
+            <Buttons size={props.level.map.len()} solution={props.level.solution} unlock={props.unlock} code={props.code} indicator={props.indicator} flawless={props.flawless}/>
         </table>
     }
 }

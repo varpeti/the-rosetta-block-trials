@@ -1,5 +1,8 @@
+use std::collections::HashSet;
 use yew::prelude::*;
 
+use crate::components::achievements::*;
+use crate::components::credit::*;
 use crate::components::level::*;
 
 const EXTRA_PANELS_BEFORE: usize = 2;
@@ -11,6 +14,10 @@ pub fn show_level_selector() -> Html {
     let unlocked_level = use_state(|| 0); // Stores the higest level unlocked
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
+    let achis = use_state(|| HashSet::<Achi>::from([])); // Stores the earned Achievements
+    let flawless = use_state(|| true); // Turns false if there any mistake
+
+    // Level
 
     let levels = get_levels();
 
@@ -18,6 +25,8 @@ pub fn show_level_selector() -> Html {
     if *panel_id >= EXTRA_PANELS_BEFORE && *panel_id < EXTRA_PANELS_BEFORE + levels.len() {
         level_id = Some(*panel_id - EXTRA_PANELS_BEFORE);
     }
+
+    // Nav buttons
 
     let forward = {
         let panel_id = panel_id.clone();
@@ -65,40 +74,53 @@ pub fn show_level_selector() -> Html {
 
     let unlock = {
         let unlocked_level = unlocked_level.clone();
+        let achis = achis.clone();
         Callback::from(move |_| {
             if let Some(level_id) = level_id {
                 if level_id >= *unlocked_level {
                     unlocked_level.set(level_id + 1);
+                    if let Some((_, achi)) = Achi::get_req().iter().find(|(&id, _)| id == level_id)
+                    {
+                        let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
+                        a.insert(achi.clone());
+                        achis.set(a);
+                    }
                 }
             }
         })
     };
 
+    // Achi
+
+    if achis.contains(&Achi::Completed) && *flawless && !achis.contains(&Achi::Flawless) {
+        let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
+        a.insert(Achi::Flawless);
+        achis.set(a);
+    }
+
     // Render panels
 
     if *panel_id == 0 {
-        return show_credit(forward_button);
+        if !achis.contains(&Achi::Credit) {
+            let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
+            a.insert(Achi::Credit);
+            achis.set(a);
+        }
+
+        return html! { <Credit forward_button={forward_button}/> };
     }
 
     if *panel_id == 1 {
-        return show_achievements(
-            String::from("Achievements"),
-            forward_button,
-            backward_button,
-            *unlocked_level,
-            levels.len(),
-        );
+        return html! {
+            <Achievements msg={"Achievements"} forward_button={forward_button} backward_button={backward_button} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} />
+        };
     }
 
     if level_id.is_none() {
         // All levels are done
-        return show_achievements(
-            String::from("Congratulation!"),
-            forward_button,
-            backward_button,
-            *unlocked_level,
-            levels.len(),
-        );
+        return html! {
+            <Achievements msg={"Congratulation!"} forward_button={forward_button} backward_button={backward_button} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} />
+        };
     }
 
     let level = levels
@@ -113,56 +135,7 @@ pub fn show_level_selector() -> Html {
         <table>
             <tr>
                 {backward_button}
-                <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} /> </td>
-                {forward_button}
-            </tr>
-        </table>
-    }
-}
-
-fn show_credit(forward_button: Html) -> Html {
-    html! {
-        <table>
-            <tr>
-                <table>
-                    <tr> <th colspan="2"> {"Credit"} </th> </tr>
-                    <tr>
-                        <td class="credit">{"Puzzle:"}</td>
-                        <td class="credit"><a href="https://mmcelebration.com/level/4/31/" target="_blank">{"rubenscube"}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="credit">{"Tech:"}</td>
-                        <td class="credit"><a href="https://yew.rs/" target="_blank">{"Yew + 🦀"}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="credit">{"Colors:"}</td>
-                        <td class="credit"><a href="https://rosepinetheme.com" target="_blank">{"Rosé Pine"}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="credit">{"Programer:"}</td>
-                        <td class="credit"><a href="https://github.com/varpeti" target="_blank">{"varpeti"}</a></td>
-                    </tr>
-                </table>
-                {forward_button}
-            </tr>
-        </table>
-    }
-}
-
-fn show_achievements(
-    msg: String,
-    forward_button: Html,
-    backward_button: Html,
-    unlocked_level: usize,
-    levels_len: usize,
-) -> Html {
-    html! {
-        <table>
-            <tr>
-                {backward_button}
-                <p> {msg} </p>
-                <p> {unlocked_level}{"/"}{levels_len} </p>
-                //TODO
+                <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> </td>
                 {forward_button}
             </tr>
         </table>

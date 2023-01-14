@@ -110,3 +110,42 @@ a:visited {
   padding: 0.5em;
   text-align: left;
 }
+
+.tooltip {
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.3s;
+
+  color: #e0def4;
+
+  top: 0px;
+  left: 0px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip:hover {
+  color: #ea9a97;
+}
+
+.show {
+  color: #f6c177;
+  transition: 200ms ease-out;
+}
+
+.locked {
+  color: #6e6a86;
+}

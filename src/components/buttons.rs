@@ -32,6 +32,7 @@ pub struct ButtonsProp {
     pub unlock: Callback<u8>,
     pub code: UseStateHandle<Vec<usize>>,
     pub indicator: UseStateHandle<bool>,
+    pub flawless: UseStateHandle<bool>,
 }
 
 #[function_component(Buttons)]
@@ -42,10 +43,7 @@ pub fn show_buttons(props: &ButtonsProp) -> Html {
         let onclick = {
             let props = props.clone();
             Callback::from(move |_| {
-                let mut new_code = Vec::<usize>::new();
-                for v in props.code.iter() {
-                    new_code.push(*v);
-                }
+                let mut new_code = props.code.iter().cloned().collect::<Vec<usize>>();
                 new_code.push(i);
                 if new_code.len() == props.size {
                     if new_code == props.solution {
@@ -53,6 +51,7 @@ pub fn show_buttons(props: &ButtonsProp) -> Html {
                         props.indicator.set(true);
                     } else {
                         props.indicator.set(false);
+                        props.flawless.set(false);
                     }
                     new_code.clear();
                 }
