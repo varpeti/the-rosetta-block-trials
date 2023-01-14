@@ -10,7 +10,7 @@ struct ButtonProp {
 #[function_component(Button)]
 fn show_button(props: &ButtonProp) -> Html {
     let props = props.clone();
-    html! { <td> <span class="buttons" onclick={props.onclick} indicator={props.indicator.to_string()}> {if props.value {'〇'} else {' '} } </span> </td> }
+    html! { <td> <span class="buttons" onclick={props.onclick} indicator={props.indicator.to_string()}> {if props.value {'◯'} else {' '} } </span> </td> }
 }
 
 #[derive(Clone, PartialEq, Properties)]

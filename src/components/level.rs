@@ -32,10 +32,10 @@ impl Block {
             {
                 match self {
                     Self::Air => ' ', //non-breaking space
-                    Self::Mark => '☐',
+                    Self::Mark => '▢',
                     Self::Mask => '?',
                     Self::Generator => '+',
-                    Self::Negative => '☒',
+                    Self::Negative => '▣',
                 }
             }
             </span></td>
