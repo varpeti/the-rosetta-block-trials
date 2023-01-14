@@ -10,6 +10,11 @@ Using [Yew](https://yew.rs/) and built with [Trunk](https://github.com/thedodd/t
 - Colors: [Rosé Pine](https://rosepinetheme.com)
 - Programer: [varpeti](https://github.com/varpeti)
 
+## Demo
+
+- [rvpt.mooo.com](https://rvpt.mooo.com/the-rosetta-block-trials/)
+- [Itch.io](https://itep.itch.io/the-rosetta-block-trials)
+
 ### Installation
 
 If you don't already have it installed, it's time to install Rust: <https://www.rust-lang.org/tools/install>.
