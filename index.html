@@ -19,7 +19,7 @@
     }
     let press_button = function (i) {
       let buttons = document.querySelectorAll(".buttons")
-      if (i < buttons.length) {
+      if (i < buttons.length && i >= 0) {
         buttons[i].click();
       }
     }
