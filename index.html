@@ -8,6 +8,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
   <link data-trunk rel="sass" href="index.scss" />
+  <script> // Keyboard bindings
+    let move = function (side) {
+      let nav_buttons = document.querySelectorAll(".nav_button")
+      for (let i = 0; i < nav_buttons.length; i++) {
+        if (nav_buttons[i].innerText == side) {
+          nav_buttons[i].click();
+        }
+      }
+    }
+    let press_button = function (i) {
+      let buttons = document.querySelectorAll(".buttons")
+      if (i < buttons.length) {
+        buttons[i].click();
+      }
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key == "ArrowLeft") {move("<")}
+      if (e.key == "ArrowRight") {move(">")}
+      if (!isNaN(+e.key)) {press_button(+e.key - 1)}
+    })
+  </script>
 </head>
 
 </html>

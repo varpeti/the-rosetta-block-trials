@@ -6,7 +6,7 @@ const EXTRA_PANELS_BEFORE: usize = 2;
 
 #[function_component(Selector)]
 pub fn show_level_selector() -> Html {
-    let panel_id = use_state(|| EXTRA_PANELS_BEFORE); // Stores the current level id
+    let panel_id = use_state(|| EXTRA_PANELS_BEFORE); // Stores the current panel id
     let unlocked_level = use_state(|| 0); // Stores the higest level unlocked
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
@@ -44,8 +44,6 @@ pub fn show_level_selector() -> Html {
     if *panel_id >= EXTRA_PANELS_BEFORE && *panel_id < EXTRA_PANELS_BEFORE + levels.len() {
         level_id = Some(*panel_id - EXTRA_PANELS_BEFORE);
     }
-
-    // TODO keyboard support
 
     let forward = {
         let panel_id = panel_id.clone();
@@ -99,6 +97,8 @@ pub fn show_level_selector() -> Html {
         })
     };
 
+    // Render panels
+
     if *panel_id == 0 {
         return html! {
             <table>
@@ -106,7 +106,7 @@ pub fn show_level_selector() -> Html {
                     <table>
                         <tr> <th colspan="2"> {"Credit"} </th> </tr>
                         <tr>
-                            <td class="credit">{"Puzzle creator:"}</td>
+                            <td class="credit">{"Puzzle:"}</td>
                             <td class="credit"><a href="https://mmcelebration.com/level/4/31/" target="_blank">{"rubenscube"}</a></td>
                         </tr>
                         <tr>
@@ -141,7 +141,8 @@ pub fn show_level_selector() -> Html {
         };
     }
 
-    if level_id.is_none() { // All levels are done
+    if level_id.is_none() {
+        // All levels are done
         return html! {
             <table>
                 <tr>
@@ -151,11 +152,14 @@ pub fn show_level_selector() -> Html {
                 </tr>
             </table>
 
-        } 
+        };
     }
 
     let level = levels
-        .get(level_id.expect(format!("The level_id is None. The panel_id is {}.", *panel_id).as_str() ))
+        .get(
+            level_id
+                .expect(format!("The level_id is None. The panel_id is {}.", *panel_id).as_str()),
+        )
         .expect(format!("The {} level does not exists!", level_id.expect("level_id")).as_str())
         .clone();
 
