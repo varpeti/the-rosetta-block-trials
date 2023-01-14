@@ -12,7 +12,6 @@ Using [Yew](https://yew.rs/) and built with [Trunk](https://github.com/thedodd/t
 
 ## Demo
 
-- [rvpt.mooo.com](https://rvpt.mooo.com/the-rosetta-block-trials/)
 - [Itch.io](https://itep.itch.io/the-rosetta-block-trials)
 
 ### Installation
