@@ -98,3 +98,43 @@ pub fn create_level(size: u8, data: &str) -> LevelStruct {
     }
     level
 }
+
+
+pub fn get_levels() -> [LevelStruct; 28] {
+    [
+        // Tutorial? 4
+        create_level(3, "  . .....012"),
+        create_level(3, " . .. ...201"),
+        create_level(3, "? .? .?..102"),
+        create_level(3, "?  ?.????210"),
+        create_level(3, "?? ? ????120"),
+        // Bigger? 6
+        create_level(4, " ????? ?...?????3201"),
+        create_level(4, " ?? .?????..????1302"),
+        // New toy? 13
+        create_level(5, " .   ..   . .   + . . ...43201"),
+        create_level(3, "  . . . +012"),
+        create_level(3, "   +   ..210"),
+        create_level(3, ".     + +120"),
+        create_level(3, "  .    ?+012"),
+        create_level(4, "?     ? ?     ? 3120"),
+        create_level(5, "      ???? ?  ? ?  ? ????02134"),
+        // New toy again? 19
+        create_level(3, "--..-....102"),
+        create_level(4, "--.---.  -.   . 1032"),
+        create_level(3, "? -?  ?. 120"),
+        create_level(3, " -?  . + 012"),
+        create_level(3, "+-    . .210"),
+        create_level(3, "? ?     ?102"),
+        // Getting serious... 24
+        create_level(4, "?   ??    ??  ? 3021"),
+        create_level(4, "? ???? ? ? ?    3021"),
+        create_level(4, "??  ??    ??  ??3021"),
+        create_level(4, "?  ?  ?? ?  ??  0312"),
+        create_level(4, "??   ?    ???  ?2310"),
+        // Exxtra! 27
+        create_level(5, "?????  ?      ? ? ? ?    10243"),
+        create_level(5, "?? ????          ??   ?? 43021"),
+        create_level(6, "??  ???    ?          ?? ?? ?   ?   123054"),
+    ]
+}

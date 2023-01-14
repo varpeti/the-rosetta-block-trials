@@ -3,6 +3,7 @@ use yew::prelude::*;
 use crate::components::level::*;
 
 const EXTRA_PANELS_BEFORE: usize = 2;
+const EXTRA_PANELS_AFTER: usize = 1;
 
 #[function_component(Selector)]
 pub fn show_level_selector() -> Html {
@@ -11,34 +12,7 @@ pub fn show_level_selector() -> Html {
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
 
-    let levels = [
-        create_level(3, "  . .....012"),
-        create_level(3, " . .. ...201"),
-        create_level(3, "? .? .?..102"),
-        create_level(3, "?  ?.????210"),
-        create_level(3, "?? ? ????120"),
-        create_level(4, " ????? ?...?????3201"),
-        create_level(4, " ?? .?????..????1302"),
-        create_level(5, " .   ..   . .   + . . ...43201"),
-        create_level(3, "  . . . +012"),
-        create_level(3, "   +   ..210"),
-        create_level(3, ".     + +120"),
-        create_level(3, "  .    ?+012"),
-        create_level(4, "?     ? ?     ? 3120"),
-        create_level(5, "      ???? ?  ? ?  ? ????02134"),
-        create_level(3, "--..-....102"),
-        create_level(4, "--.---.  -.   . 1032"),
-        create_level(3, "? -?  ?. 120"),
-        create_level(3, " -?  . + 012"),
-        create_level(3, "+-    . .210"),
-        create_level(3, "? ?     ?102"),
-        create_level(4, "?   ??    ??  ? 3021"),
-        create_level(4, "? ???? ? ? ?    3021"),
-        create_level(4, "??  ??    ??  ??3021"),
-        create_level(4, "?  ?  ?? ?  ??  0312"),
-        create_level(4, "??   ?    ???  ?2310"),
-        // TODO add levels
-    ];
+    let levels = get_levels();
 
     let mut level_id: Option<usize> = None;
     if *panel_id >= EXTRA_PANELS_BEFORE && *panel_id < EXTRA_PANELS_BEFORE + levels.len() {
@@ -60,7 +34,10 @@ pub fn show_level_selector() -> Html {
     };
 
     let forward_button;
-    if level_id.is_none() || level_id.expect("level_id") < *unlocked_level {
+    if (level_id.is_none()
+        && *panel_id + 1 < levels.len() + EXTRA_PANELS_BEFORE + EXTRA_PANELS_AFTER)
+        || (level_id.is_some() && level_id.expect("level_id") < *unlocked_level)
+    {
         forward_button = html! { <td class={"nav"}> <span class={"nav_button"} onclick={forward}>{'>'}</span> </td> };
     } else {
         forward_button = html! { <td class={"nav"}></td> }
@@ -100,59 +77,28 @@ pub fn show_level_selector() -> Html {
     // Render panels
 
     if *panel_id == 0 {
-        return html! {
-            <table>
-                <tr>
-                    <table>
-                        <tr> <th colspan="2"> {"Credit"} </th> </tr>
-                        <tr>
-                            <td class="credit">{"Puzzle:"}</td>
-                            <td class="credit"><a href="https://mmcelebration.com/level/4/31/" target="_blank">{"rubenscube"}</a></td>
-                        </tr>
-                        <tr>
-                            <td class="credit">{"Tech:"}</td>
-                            <td class="credit"><a href="https://yew.rs/" target="_blank">{"Yew + 🦀"}</a></td>
-                        </tr>
-                        <tr>
-                            <td class="credit">{"Colors:"}</td>
-                            <td class="credit"><a href="https://rosepinetheme.com" target="_blank">{"Rosé Pine"}</a></td>
-                        </tr>
-                        <tr>
-                            <td class="credit">{"Programer:"}</td>
-                            <td class="credit"><a href="https://github.com/varpeti" target="_blank">{"varpeti"}</a></td>
-                        </tr>
-                    </table>
-                    {forward_button}
-                </tr>
-            </table>
-        };
+        return show_credit(forward_button);
     }
 
     if *panel_id == 1 {
-        return html! {
-            <table>
-                <tr>
-                    {backward_button}
-                        <p> {"Achievements"} </p> //TODO
-                        <p> {*unlocked_level}{"/"}{levels.len()} </p>
-                    {forward_button}
-                </tr>
-            </table>
-        };
+        return show_achievements(
+            String::from("Achievements"),
+            forward_button,
+            backward_button,
+            *unlocked_level,
+            levels.len(),
+        );
     }
 
     if level_id.is_none() {
         // All levels are done
-        return html! {
-            <table>
-                <tr>
-                    {backward_button}
-                        <p> {"Congratulation!"} </p>
-                        <p> {*unlocked_level}{"/"}{levels.len()} </p>
-                </tr>
-            </table>
-
-        };
+        return show_achievements(
+            String::from("Congratulation!"),
+            forward_button,
+            backward_button,
+            *unlocked_level,
+            levels.len(),
+        );
     }
 
     let level = levels
@@ -168,6 +114,55 @@ pub fn show_level_selector() -> Html {
             <tr>
                 {backward_button}
                 <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} /> </td>
+                {forward_button}
+            </tr>
+        </table>
+    }
+}
+
+fn show_credit(forward_button: Html) -> Html {
+    html! {
+        <table>
+            <tr>
+                <table>
+                    <tr> <th colspan="2"> {"Credit"} </th> </tr>
+                    <tr>
+                        <td class="credit">{"Puzzle:"}</td>
+                        <td class="credit"><a href="https://mmcelebration.com/level/4/31/" target="_blank">{"rubenscube"}</a></td>
+                    </tr>
+                    <tr>
+                        <td class="credit">{"Tech:"}</td>
+                        <td class="credit"><a href="https://yew.rs/" target="_blank">{"Yew + 🦀"}</a></td>
+                    </tr>
+                    <tr>
+                        <td class="credit">{"Colors:"}</td>
+                        <td class="credit"><a href="https://rosepinetheme.com" target="_blank">{"Rosé Pine"}</a></td>
+                    </tr>
+                    <tr>
+                        <td class="credit">{"Programer:"}</td>
+                        <td class="credit"><a href="https://github.com/varpeti" target="_blank">{"varpeti"}</a></td>
+                    </tr>
+                </table>
+                {forward_button}
+            </tr>
+        </table>
+    }
+}
+
+fn show_achievements(
+    msg: String,
+    forward_button: Html,
+    backward_button: Html,
+    unlocked_level: usize,
+    levels_len: usize,
+) -> Html {
+    html! {
+        <table>
+            <tr>
+                {backward_button}
+                <p> {msg} </p>
+                <p> {unlocked_level}{"/"}{levels_len} </p>
+                //TODO
                 {forward_button}
             </tr>
         </table>
