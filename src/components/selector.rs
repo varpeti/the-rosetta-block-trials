@@ -15,6 +15,7 @@ pub fn show_level_selector() -> Html {
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
     let achis = use_state(|| HashSet::<Achi>::from([])); // Stores the earned Achievements
+    let new_achi: UseStateHandle<Option<Achi>> = use_state(|| None); // Shows the newly earned acchivement
     let flawless = use_state(|| true); // Turns false if there any mistake
 
     // Level
@@ -33,11 +34,15 @@ pub fn show_level_selector() -> Html {
         let unlocked_level = unlocked_level.clone();
         let code = code.clone();
         let indicator = indicator.clone();
+        let new_achi = new_achi.clone();
         Callback::from(move |_| {
             if level_id.is_none() || level_id.expect("level_id") < *unlocked_level {
                 panel_id.set(*panel_id + 1);
                 code.set(vec![]);
                 indicator.set(false);
+                if new_achi.is_some() {
+                    new_achi.set(None);
+                }
             }
         })
     };
@@ -56,11 +61,15 @@ pub fn show_level_selector() -> Html {
         let panel_id = panel_id.clone();
         let code = code.clone();
         let indicator = indicator.clone();
+        let new_achi = new_achi.clone();
         Callback::from(move |_| {
             if *panel_id > 0 {
                 panel_id.set(*panel_id - 1);
                 code.set(vec![]);
                 indicator.set(false);
+                if new_achi.is_some() {
+                    new_achi.set(None);
+                }
             }
         })
     };
@@ -75,15 +84,19 @@ pub fn show_level_selector() -> Html {
     let unlock = {
         let unlocked_level = unlocked_level.clone();
         let achis = achis.clone();
+        let new_achi = new_achi.clone();
         Callback::from(move |_| {
             if let Some(level_id) = level_id {
                 if level_id >= *unlocked_level {
+                    // Unlock
                     unlocked_level.set(level_id + 1);
+                    // Achi
                     if let Some((_, achi)) = Achi::get_req().iter().find(|(&id, _)| id == level_id)
                     {
                         let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
                         a.insert(achi.clone());
                         achis.set(a);
+                        new_achi.set(Some(achi.clone()));
                     }
                 }
             }
@@ -96,46 +109,50 @@ pub fn show_level_selector() -> Html {
         let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
         a.insert(Achi::Flawless);
         achis.set(a);
+        new_achi.set(Some(Achi::Flawless));
     }
 
     // Render panels
 
-    if *panel_id == 0 {
-        if !achis.contains(&Achi::Credit) {
-            let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
-            a.insert(Achi::Credit);
-            achis.set(a);
+    let panel = match *panel_id {
+        0 => {
+            if !achis.contains(&Achi::Credit) {
+                let mut a = achis.iter().cloned().collect::<HashSet<Achi>>();
+                a.insert(Achi::Credit);
+                achis.set(a);
+                new_achi.set(Some(Achi::Credit));
+            }
+
+            html! { <Credit/> }
+        }
+        1 => {
+            html! { <Achievements msg={"Achievements"} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} /> }
+        }
+        _ if level_id.is_none() => {
+            // All levels are done
+            html! { <Achievements msg={"Congratulation!"} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} /> }
         }
 
-        return html! { <Credit forward_button={forward_button}/> };
-    }
+        _ => {
+            let level = levels
+                .get(level_id.expect(
+                    format!("The level_id is None. The panel_id is {}.", *panel_id).as_str(),
+                ))
+                .expect(
+                    format!("The {} level does not exists!", level_id.expect("level_id")).as_str(),
+                )
+                .clone();
 
-    if *panel_id == 1 {
-        return html! {
-            <Achievements msg={"Achievements"} forward_button={forward_button} backward_button={backward_button} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} />
-        };
-    }
-
-    if level_id.is_none() {
-        // All levels are done
-        return html! {
-            <Achievements msg={"Congratulation!"} forward_button={forward_button} backward_button={backward_button} unlocked_level={*unlocked_level} levels_len={levels.len()} achis={(*achis).clone()} />
-        };
-    }
-
-    let level = levels
-        .get(
-            level_id
-                .expect(format!("The level_id is None. The panel_id is {}.", *panel_id).as_str()),
-        )
-        .expect(format!("The {} level does not exists!", level_id.expect("level_id")).as_str())
-        .clone();
+            html! { <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> }
+        }
+    };
 
     html! {
         <table>
+            <NewAchievement new_achi={(*new_achi).clone()}/>
             <tr>
                 {backward_button}
-                <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> </td>
+                <td> {panel} <td>
                 {forward_button}
             </tr>
         </table>

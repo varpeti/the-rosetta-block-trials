@@ -58,8 +58,6 @@ impl Achi {
 #[derive(Clone, PartialEq, Properties)]
 pub struct AchievementsProps {
     pub msg: String,
-    pub forward_button: Html,
-    pub backward_button: Html,
     pub unlocked_level: usize,
     pub levels_len: usize,
     pub achis: HashSet<Achi>,
@@ -70,27 +68,43 @@ pub fn show_achievements(props: &AchievementsProps) -> Html {
     let achis = Achi::iter().map(|achi| {
         if props.achis.contains(&achi) {
             html! {
-                <span class="show tooltip"> {"⚝"}
+                <span class="show tooltip"> {"✷"}
                     <span class="tooltiptext"> {achi.to_string()} </span>
                 </span>
             }
         } else {
             html! {
-                <span class="locked"> {"⚝"} </span>
+                <span class="locked"> {"✷"} </span>
             }
         }
     });
 
     let props = props.clone();
     html! {
-        <table>
-            <tr>
-                {props.backward_button}
-                <p> {props.msg} </p>
-                <p> {props.unlocked_level}{"/"}{props.levels_len} </p>
-                <p> {achis.collect::<Vec<Html>>()} </p>
-                {props.forward_button}
-            </tr>
-        </table>
+        <td>
+            <p> {props.msg} </p>
+            <p> {props.unlocked_level}{"/"}{props.levels_len} </p>
+            <p> {achis.collect::<Vec<Html>>()} </p>
+        </td>
+    }
+}
+
+
+#[derive(Clone, PartialEq, Properties)]
+pub struct NewAchievementProps {
+    pub new_achi: Option<Achi>,
+}
+
+#[function_component(NewAchievement)]
+pub fn show_new_achievement(props: &NewAchievementProps) -> Html {
+    let props = props.clone();
+    if let Some(achi) = props.new_achi {
+        html! {
+            <span class="new_achi show tooltip"> {"✷"}
+                <span class="tooltiptext"> {"New achievement:"} <br/> {achi.to_string()} </span>
+            </span>
+        }
+    } else {
+     html!{}
     }
 }
