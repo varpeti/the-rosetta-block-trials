@@ -134,16 +134,19 @@ pub fn show_level_selector() -> Html {
         }
 
         _ => {
+            let level_id = level_id
+                .expect(format!("The level_id is None. The panel_id is {}.", *panel_id).as_str());
             let level = levels
-                .get(level_id.expect(
-                    format!("The level_id is None. The panel_id is {}.", *panel_id).as_str(),
-                ))
-                .expect(
-                    format!("The {} level does not exists!", level_id.expect("level_id")).as_str(),
-                )
+                .get(level_id)
+                .expect(format!("The {} level does not exists!", level_id).as_str())
                 .clone();
 
-            html! { <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> </td> }
+            html! {
+                <td>
+                    <span class={"level_id"}>{format!("{:0>2}", level_id+1)}</span>
+                    <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} />
+                </td>
+            }
         }
     };
 
