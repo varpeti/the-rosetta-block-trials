@@ -14,7 +14,7 @@ pub fn show_level_selector() -> Html {
     let unlocked_level = use_state(|| 0); // Stores the higest level unlocked
     let code = use_state(|| vec![]); // Stores the current code entered by the player
     let indicator = use_state(|| false); // Indicate the last answer correctness
-    let achis = use_state(|| HashSet::<Achi>::from([])); // Stores the earned Achievements
+    let achis = use_state(|| HashSet::<Achi>::new()); // Stores the earned Achievements
     let new_achi: UseStateHandle<Option<Achi>> = use_state(|| None); // Shows the newly earned acchivement
     let flawless = use_state(|| true); // Turns false if there any mistake
 
@@ -143,7 +143,7 @@ pub fn show_level_selector() -> Html {
                 )
                 .clone();
 
-            html! { <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> }
+            html! { <td> <Level level={level} unlock={unlock} code={code} indicator={indicator} flawless={flawless} /> </td> }
         }
     };
 
@@ -152,7 +152,7 @@ pub fn show_level_selector() -> Html {
             <NewAchievement new_achi={(*new_achi).clone()}/>
             <tr>
                 {backward_button}
-                <td> {panel} <td>
+                {panel}
                 {forward_button}
             </tr>
         </table>
